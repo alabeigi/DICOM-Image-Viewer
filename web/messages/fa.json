@@ -1,0 +1,78 @@
+{
+  "app": {
+    "title": "مشاهده‌گر تصاویر DICOM",
+    "description": "بارگذاری و مشاهده تصاویر پزشکی DICOM با دقت و وضوح"
+  },
+  "upload": {
+    "title": "بارگذاری فایل‌های DICOM",
+    "titleDrag": "فایل‌های DICOM را اینجا رها کنید",
+    "subtitle": "فایل‌های .dcm خود را بکشید و رها کنید یا برای مرور کلیک کنید",
+    "hint": "پشتیبانی از فایل‌های .dcm • چند فایل پذیرفته می‌شود",
+    "parsing": "در حال پردازش فایل‌های DICOM..."
+  },
+  "stats": {
+    "patients": "{count, plural, one {بیمار} other {بیماران}}",
+    "series": "سلسله‌مراتب",
+    "images": "تصاویر",
+    "totalSize": "اندازه کل",
+    "ariaLabel": "آمار بارگذاری"
+  },
+  "table": {
+    "title": "سلسله‌مراتب DICOM",
+    "patient": "بیمار",
+    "modality": "نوع",
+    "studyDate": "تاریخ مطالعه",
+    "seriesUID": "شناسه سلسله‌مراتب",
+    "studyUID": "شناسه مطالعه",
+    "images": "تصاویر",
+    "size": "اندازه",
+    "actions": "عملیات",
+    "view": "مشاهده",
+    "ariaLabel": "داده‌های سلسله‌مراتب DICOM"
+  },
+  "empty": {
+    "title": "هیچ فایل DICOM بارگذاری نشده است",
+    "description": "اولین تصویر DICOM خود را برای شروع بارگذاری کنید. مشاهده‌گر از فایل‌های استاندارد .dcm پشتیبانی می‌کند."
+  },
+  "modal": {
+    "title": "تصاویر DICOM",
+    "imageCount": "{count, plural, other {# تصویر}}",
+    "imageLabel": "تصویر {index}",
+    "closeLabel": "بستن مشاهده‌گر تصویر",
+    "ariaLabel": "مشاهده‌گر تصویر DICOM",
+    "viewerAriaLabel": "کنترل‌های مشاهده‌گر تصویر"
+  },
+  "toolbar": {
+    "windowLevel": "سطح پنجره",
+    "pan": "جابجایی",
+    "zoom": "بزرگ‌نمایی",
+    "zoomIn": "بزرگ‌نمایی",
+    "zoomOut": "کوچک‌نمایی",
+    "invert": "معکوس",
+    "reset": "بازنشانی"
+  },
+  "shortcuts": {
+    "title": "میانبرهای صفحه‌کلید:",
+    "invert": "معکوس",
+    "reset": "بازنشانی",
+    "zoom": "بزرگ‌نمایی",
+    "close": "بستن"
+  },
+  "theme": {
+    "switchToDark": "تغییر به حالت تاریک",
+    "switchToLight": "تغییر به حالت روشن"
+  },
+  "toast": {
+    "filesLoaded": "{count, plural, other {# فایل DICOM با موفقیت بارگذاری شد}}",
+    "parseError": "خطا در پردازش {file}",
+    "noValidFiles": "فایل معتبر .dcm یافت نشد",
+    "imageInverted": "تصویر معکوس شد",
+    "imageNormal": "تصویر عادی",
+    "viewReset": "مشاهده به حالت پیش‌فرض بازنشانی شد",
+    "dismiss": "بستن اعلان"
+  },
+  "language": {
+    "en": "English",
+    "fa": "فارسی"
+  }
+}

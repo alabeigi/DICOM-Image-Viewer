@@ -1,0 +1,78 @@
+{
+  "app": {
+    "title": "DICOM Image Viewer",
+    "description": "Upload and view DICOM medical images with precision and clarity"
+  },
+  "upload": {
+    "title": "Upload DICOM Files",
+    "titleDrag": "Drop DICOM files here",
+    "subtitle": "Drag & drop your .dcm files or click to browse",
+    "hint": "Supports .dcm files • Multiple files accepted",
+    "parsing": "Parsing DICOM files..."
+  },
+  "stats": {
+    "patients": "{count, plural, one {Patient} other {Patients}}",
+    "series": "Series",
+    "images": "Images",
+    "totalSize": "Total Size",
+    "ariaLabel": "Upload statistics"
+  },
+  "table": {
+    "title": "DICOM Series",
+    "patient": "Patient",
+    "modality": "Modality",
+    "studyDate": "Study Date",
+    "seriesUID": "Series UID",
+    "studyUID": "Study UID",
+    "images": "Images",
+    "size": "Size",
+    "actions": "Actions",
+    "view": "View",
+    "ariaLabel": "DICOM series data"
+  },
+  "empty": {
+    "title": "No DICOM files loaded",
+    "description": "Upload your first DICOM image to get started. The viewer supports standard .dcm files."
+  },
+  "modal": {
+    "title": "DICOM Images",
+    "imageCount": "{count, plural, one {# image} other {# images}}",
+    "imageLabel": "Image {index}",
+    "closeLabel": "Close image viewer",
+    "ariaLabel": "DICOM image viewer",
+    "viewerAriaLabel": "Image viewer controls"
+  },
+  "toolbar": {
+    "windowLevel": "Window/Level",
+    "pan": "Pan",
+    "zoom": "Zoom",
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out",
+    "invert": "Invert",
+    "reset": "Reset"
+  },
+  "shortcuts": {
+    "title": "Keyboard shortcuts:",
+    "invert": "Invert",
+    "reset": "Reset",
+    "zoom": "Zoom",
+    "close": "Close"
+  },
+  "theme": {
+    "switchToDark": "Switch to dark mode",
+    "switchToLight": "Switch to light mode"
+  },
+  "toast": {
+    "filesLoaded": "{count, plural, one {# DICOM file loaded successfully} other {# DICOM files loaded successfully}}",
+    "parseError": "Failed to parse {file}",
+    "noValidFiles": "No valid .dcm files found",
+    "imageInverted": "Image inverted",
+    "imageNormal": "Image normal",
+    "viewReset": "View reset to default",
+    "dismiss": "Dismiss notification"
+  },
+  "language": {
+    "en": "English",
+    "fa": "فارسی"
+  }
+}
