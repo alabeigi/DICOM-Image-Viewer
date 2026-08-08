@@ -1,5 +1,3 @@
-/* ===== SVG Icons ===== */
-
 import { memo } from "react";
 
 const UploadIcon = memo(() => (

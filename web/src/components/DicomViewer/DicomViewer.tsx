@@ -6,6 +6,8 @@ import cornerstone from 'cornerstone-core';
 import cornerstoneTools from 'cornerstone-tools';
 import cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
 import dicomParser from 'dicom-parser';
+import Hammer from 'hammerjs';
+import cornerstoneMath from 'cornerstone-math';
 import {
   UploadIcon,
   FileIcon,
@@ -36,7 +38,50 @@ import {
 } from './utils';
 import LanguageSwitcher from '@/components/LanguageSwitcher/LanguageSwitcher';
 
-/* ===== Component ===== */
+const LOG_PREFIX = '[DicomViewer]';
+
+const getFileKey = (file: File): string => `${file.name}:${file.size}:${file.lastModified}`;
+
+const mergeMetadata = (
+  prev: ImageMetadata[],
+  entries: ImageMetadata[],
+): { next: ImageMetadata[]; added: number } => {
+  const seenKeys = new Set<string>();
+  prev.forEach((entry) => entry.files.forEach((f) => seenKeys.add(getFileKey(f))));
+
+  const next = prev.map((entry) => ({
+    ...entry,
+    files: [...entry.files],
+    totalSize: entry.totalSize,
+  }));
+  let added = 0;
+
+  for (const newEntry of entries) {
+    const freshFiles = newEntry.files.filter((f) => {
+      const key = getFileKey(f);
+      if (seenKeys.has(key)) return false;
+      seenKeys.add(key);
+      return true;
+    });
+    if (freshFiles.length === 0) continue;
+
+    added += freshFiles.length;
+    const existing = next.find((d) => d.patientID === newEntry.patientID);
+    if (existing) {
+      existing.files.push(...freshFiles);
+      existing.totalSize = existing.files.reduce((sum, f) => sum + f.size, 0);
+    } else {
+      next.push({
+        ...newEntry,
+        files: freshFiles,
+        totalSize: freshFiles.reduce((sum, f) => sum + f.size, 0),
+      });
+    }
+  }
+
+  return { next, added };
+};
+
 const DicomViewer = () => {
   const t = useTranslations();
   const [metadata, setMetadata] = useState<ImageMetadata[]>([]);
@@ -54,29 +99,32 @@ const DicomViewer = () => {
   const [activeTool, setActiveTool] = useState<string>('Wwwc');
   const [toasts, setToasts] = useState<Toast[]>([]);
   const imageRefs = useRef<HTMLDivElement[]>([]);
+  const enabledElementsRef = useRef<Set<HTMLDivElement>>(new Set());
+  const metadataRef = useRef<ImageMetadata[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const toastIdRef = useRef(0);
   const toastTimeoutsRef = useRef<Map<number, NodeJS.Timeout>>(new Map());
 
-  /* ===== Initialize Cornerstone & Tools ===== */
   useEffect(() => {
-    // Set external dependencies for cornerstone-wado-image-loader
     cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
     cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
     cornerstoneWADOImageLoader.configure({});
 
-    // Set external cornerstone reference for cornerstone-tools BEFORE init
+    cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
+    cornerstoneTools.external.Hammer = Hammer;
     cornerstoneTools.external.cornerstone = cornerstone;
     cornerstoneTools.init();
   }, []);
 
-  /* ===== Cleanup on unmount ===== */
+  useEffect(() => {
+    metadataRef.current = metadata;
+  }, [metadata]);
+
   useEffect(() => {
     const currentImageRefs = imageRefs.current;
     const currentToastTimeouts = toastTimeoutsRef.current;
 
     return () => {
-      // Cleanup cornerstone elements
       currentImageRefs.forEach((element) => {
         if (element) {
           try {
@@ -84,19 +132,17 @@ const DicomViewer = () => {
             cornerstoneTools.removeToolForElement(element, 'Pan');
             cornerstoneTools.removeToolForElement(element, 'Zoom');
             cornerstone.disable(element);
-          } catch {
-            // Element was not enabled, ignore
+          } catch (err) {
+            console.warn(`${LOG_PREFIX} Failed to cleanup cornerstone element during unmount`, err);
           }
         }
       });
 
-      // Cleanup toast timeouts
       currentToastTimeouts.forEach((timeout) => clearTimeout(timeout));
       currentToastTimeouts.clear();
     };
   }, []);
 
-  /* ===== Theme ===== */
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('dicom-viewer-theme', theme);
@@ -106,7 +152,6 @@ const DicomViewer = () => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   }, []);
 
-  /* ===== Toast System ===== */
   const addToast = useCallback((type: Toast['type'], message: string) => {
     const id = ++toastIdRef.current;
     setToasts((prev) => [...prev, { id, type, message }]);
@@ -134,7 +179,6 @@ const DicomViewer = () => {
     toastTimeoutsRef.current.set(id, timeout);
   }, []);
 
-  /* ===== Shared Tool Setup ===== */
   const setupToolsForElement = useCallback((element: HTMLDivElement) => {
     cornerstoneTools.addToolForElement(element, cornerstoneTools.WwwcTool);
     cornerstoneTools.addToolForElement(element, cornerstoneTools.PanTool);
@@ -144,7 +188,6 @@ const DicomViewer = () => {
     cornerstoneTools.setToolActive('Zoom', { mouseButtonMask: 2 });
   }, []);
 
-  /* ===== Cleanup cornerstone elements ===== */
   const cleanupCornerstone = useCallback(() => {
     imageRefs.current.forEach((element) => {
       if (element) {
@@ -153,73 +196,103 @@ const DicomViewer = () => {
           cornerstoneTools.removeToolForElement(element, 'Pan');
           cornerstoneTools.removeToolForElement(element, 'Zoom');
           cornerstone.disable(element);
-        } catch {
-          // Element was not enabled, ignore
+        } catch (err) {
+          console.warn(`${LOG_PREFIX} Failed to cleanup cornerstone element`, err);
         }
       }
     });
     imageRefs.current = [];
+    enabledElementsRef.current.clear();
   }, []);
 
-  /* ===== Image Loading ===== */
-  const loadImage = useCallback(async (file: File, index: number) => {
-    const element = imageRefs.current[index];
-    if (!element) return;
-    try {
-      cornerstone.enable(element);
-      setupToolsForElement(element);
-      const imageId = cornerstoneWADOImageLoader.wadouri.fileManager.add(file);
-      const image = await cornerstone.loadImage(imageId);
-      cornerstone.displayImage(element, image);
-    } catch (err) {
-      console.warn(`Failed to load DICOM image: ${file.name}`, err);
-    }
-  }, [setupToolsForElement]);
+  useEffect(() => {
+    if (!open || selectedImages.length === 0) return;
 
-  /* ===== Toolbar — switches active tool via mouseButtonMask: 1 ===== */
+    let cancelled = false;
+    const MAX_CONCURRENT = 3;
+    let nextIndex = 0;
+
+    const worker = async () => {
+      while (!cancelled) {
+        const index = nextIndex++;
+        if (index >= selectedImages.length) return;
+        const file = selectedImages[index];
+        const element = imageRefs.current[index];
+        if (!element) continue;
+        try {
+          if (!enabledElementsRef.current.has(element)) {
+            cornerstone.enable(element);
+            enabledElementsRef.current.add(element);
+            setupToolsForElement(element);
+          }
+          const imageId = cornerstoneWADOImageLoader.wadouri.fileManager.add(file);
+          const image = await cornerstone.loadImage(imageId);
+          if (cancelled) return;
+          cornerstone.displayImage(element, image);
+        } catch (err) {
+          console.error(`${LOG_PREFIX} Failed to load DICOM image: "${file.name}" (index ${index})`, err);
+        }
+      }
+    };
+
+    const workers = Array.from(
+      { length: Math.min(MAX_CONCURRENT, selectedImages.length) },
+      () => worker(),
+    );
+
+    return () => {
+      cancelled = true;
+    };
+  }, [open, selectedImages, setupToolsForElement]);
+
   const switchTool = useCallback((toolName: string) => {
     const element = imageRefs.current[0];
     if (!element) return;
     try {
       cornerstoneTools.setToolActive(toolName, { mouseButtonMask: 1 });
       setActiveTool(toolName);
-    } catch {
-      // Tool not available
+    } catch (err) {
+      console.warn(`${LOG_PREFIX} Failed to switch tool to "${toolName}"`, err);
     }
   }, []);
 
   const handleZoomIn = useCallback(() => {
-    const element = imageRefs.current[0];
-    if (element) {
-      const viewport = cornerstone.getViewport(element);
-      if (viewport) {
-        viewport.scale *= 1.2;
-        cornerstone.setViewport(element, viewport);
+    imageRefs.current.forEach((element) => {
+      if (element) {
+        const viewport = cornerstone.getViewport(element);
+        if (viewport) {
+          viewport.scale *= 1.2;
+          cornerstone.setViewport(element, viewport);
+        }
       }
-    }
+    });
   }, []);
 
   const handleZoomOut = useCallback(() => {
-    const element = imageRefs.current[0];
-    if (element) {
-      const viewport = cornerstone.getViewport(element);
-      if (viewport) {
-        viewport.scale /= 1.2;
-        cornerstone.setViewport(element, viewport);
+    imageRefs.current.forEach((element) => {
+      if (element) {
+        const viewport = cornerstone.getViewport(element);
+        if (viewport) {
+          viewport.scale /= 1.2;
+          cornerstone.setViewport(element, viewport);
+        }
       }
-    }
+    });
   }, []);
 
   const handleInvert = useCallback(() => {
-    const element = imageRefs.current[0];
-    if (element) {
-      const viewport = cornerstone.getViewport(element);
-      if (viewport) {
-        viewport.invert = !viewport.invert;
-        cornerstone.setViewport(element, viewport);
-        addToast('info', viewport.invert ? t('toast.imageInverted') : t('toast.imageNormal'));
+    let inverted = false;
+    imageRefs.current.forEach((element, i) => {
+      if (element) {
+        const viewport = cornerstone.getViewport(element);
+        if (viewport) {
+          viewport.invert = !viewport.invert;
+          cornerstone.setViewport(element, viewport);
+          if (i === 0) inverted = viewport.invert;
+        }
       }
-    }
+    });
+    addToast('info', inverted ? t('toast.imageInverted') : t('toast.imageNormal'));
   }, [addToast, t]);
 
   const handleReset = useCallback(() => {
@@ -231,7 +304,6 @@ const DicomViewer = () => {
     addToast('info', t('toast.viewReset'));
   }, [addToast, t]);
 
-  /* ===== File Handling ===== */
   const processFiles = useCallback(async (files: File[]) => {
     setIsLoading(true);
 
@@ -256,7 +328,8 @@ const DicomViewer = () => {
           files: [file],
           totalSize: file.size,
         };
-      } catch {
+      } catch (err) {
+        console.error(`${LOG_PREFIX} Failed to parse DICOM file: "${file.name}"`, err);
         addToast('error', t('toast.parseError', { file: file.name }));
         return null;
       }
@@ -266,20 +339,12 @@ const DicomViewer = () => {
     const validResults = results.filter((r): r is ImageMetadata => r !== null);
 
     if (validResults.length > 0) {
-      setMetadata((prev) => {
-        const updated = [...prev];
-        for (const newEntry of validResults) {
-          const existing = updated.find((d) => d.patientID === newEntry.patientID);
-          if (existing) {
-            existing.files.push(...newEntry.files);
-            existing.totalSize += newEntry.totalSize;
-          } else {
-            updated.push(newEntry);
-          }
-        }
-        return updated;
-      });
-      addToast('success', t('toast.filesLoaded', { count: validResults.length }));
+      const { added } = mergeMetadata(metadataRef.current, validResults);
+      setMetadata((prev) => mergeMetadata(prev, validResults).next);
+
+      if (added > 0) {
+        addToast('success', t('toast.filesLoaded', { count: added }));
+      }
     }
 
     setIsLoading(false);
@@ -292,7 +357,6 @@ const DicomViewer = () => {
     }
   }, [processFiles]);
 
-  /* ===== Drag & Drop ===== */
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(true);
@@ -327,22 +391,20 @@ const DicomViewer = () => {
     }
   }, []);
 
-  /* ===== Modal ===== */
   const handleOpenModal = useCallback((files: File[], meta: ImageMetadata) => {
     cleanupCornerstone();
-    const uniqueFiles = Array.from(new Set(files.map((file) => file.name))).map(
-      (uniqueFileName) => files.find((file) => file.name === uniqueFileName)!,
-    );
+    const seen = new Set<string>();
+    const uniqueFiles = files.filter((f) => {
+      const key = getFileKey(f);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
     setSelectedImages(uniqueFiles);
     setSelectedMetadata(meta);
     setActiveTool('Wwwc');
     setOpen(true);
-    setTimeout(() => {
-      uniqueFiles.forEach((file, index) => {
-        loadImage(file, index);
-      });
-    }, 0);
-  }, [cleanupCornerstone, loadImage]);
+  }, [cleanupCornerstone]);
 
   const handleCloseModal = useCallback(() => {
     cleanupCornerstone();
@@ -351,7 +413,6 @@ const DicomViewer = () => {
     setSelectedMetadata(null);
   }, [cleanupCornerstone]);
 
-  /* Handle keyboard shortcuts */
   useEffect(() => {
     if (!open) return;
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -397,17 +458,14 @@ const DicomViewer = () => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [open, handleCloseModal, handleInvert, handleReset, handleZoomIn, handleZoomOut, switchTool]);
 
-  /* ===== Computed ===== */
   const totalFiles = metadata.reduce((acc, m) => acc + m.files.length, 0);
   const totalPatients = metadata.length;
   const totalSize = metadata.reduce((acc, m) => acc + m.totalSize, 0);
   const hasFiles = metadata.length > 0;
 
-  /* ===== Render ===== */
   return (
     <main>
       <div className="container">
-        {/* Header */}
         <div className="app-header">
           <div className="header-controls">
             <LanguageSwitcher />
@@ -423,7 +481,6 @@ const DicomViewer = () => {
           <p>{t('app.description')}</p>
         </div>
 
-        {/* Upload Zone */}
         <div
           className={`upload-zone ${isDragging ? 'dragging' : ''} ${hasFiles ? 'has-files' : ''}`}
           onClick={handleZoneClick}
@@ -466,7 +523,6 @@ const DicomViewer = () => {
           </div>
         </div>
 
-        {/* Stats Bar */}
         {hasFiles && (
           <div className="stats-bar" role="status" aria-label={t('stats.ariaLabel')}>
             <div className="stat-item">
@@ -503,7 +559,6 @@ const DicomViewer = () => {
           </div>
         )}
 
-        {/* Keyboard Shortcuts Hint */}
         {hasFiles && (
           <div className="shortcuts-hint">
             <span>{t('shortcuts.title')}</span>
@@ -516,7 +571,6 @@ const DicomViewer = () => {
           </div>
         )}
 
-        {/* Table or Empty State */}
         {hasFiles ? (
           <div className="table-card">
             <div className="table-header">
@@ -602,7 +656,6 @@ const DicomViewer = () => {
           </div>
         )}
 
-        {/* Modal */}
         {open && (
           <div
             className="modal-overlay"
@@ -639,7 +692,6 @@ const DicomViewer = () => {
                 </button>
               </div>
 
-              {/* Toolbar */}
               <div className="viewer-toolbar" role="toolbar" aria-label={t('modal.viewerAriaLabel')}>
                 <div className="toolbar-group">
                   <button
@@ -712,7 +764,6 @@ const DicomViewer = () => {
           </div>
         )}
 
-        {/* Toast Notifications */}
         <div className="toast-container" aria-live="polite" aria-atomic="true">
           {toasts.map((toast) => (
             <div key={toast.id} className={`toast toast-${toast.type} ${toast.exiting ? 'exiting' : ''}`}>

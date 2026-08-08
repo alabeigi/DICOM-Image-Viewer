@@ -1,5 +1,4 @@
 :root {
-  /* Color Palette - Medical/Professional */
   --color-primary: #0066CC;
   --color-primary-light: #3399FF;
   --color-primary-dark: #004C99;
@@ -27,32 +26,27 @@
   --color-error: #FC8181;
   --color-info: #63B3ED;
   
-  /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   --shadow-glow: 0 0 20px rgba(0, 102, 204, 0.15);
   
-  /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', monospace;
   
-  /* Spacing */
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
   --radius-xl: 24px;
   --radius-full: 9999px;
   
-  /* Transitions */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-spring: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* ===== Dark Mode ===== */
 [data-theme="dark"] {
   --color-primary: #3399FF;
   --color-primary-light: #66B3FF;
@@ -82,9 +76,6 @@
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
   --shadow-glow: 0 0 20px rgba(51, 153, 255, 0.2);
 }
-
-/* ===== RTL Support ===== */
-
 
 [dir="rtl"] .toast-container {
   right: auto;
@@ -151,7 +142,6 @@
   text-align: left !important;
 }
 
-/* RTL Responsive */
 @media screen and (max-width: 768px) {
   [dir="rtl"] .toast-container {
     left: 1rem;
@@ -207,7 +197,6 @@ a {
   text-decoration: none;
 }
 
-/* ===== Scrollbar ===== */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -224,7 +213,6 @@ a {
   background: var(--color-text-secondary);
 }
 
-/* ===== Animations ===== */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
@@ -275,7 +263,6 @@ a {
   to { opacity: 0; transform: translateX(-100%) scale(0.95); }
 }
 
-/* ===== Container ===== */
 .container {
   display: flex;
   flex-direction: column;
@@ -286,7 +273,6 @@ a {
   min-height: 100vh;
 }
 
-/* ===== Header ===== */
 .app-header {
   text-align: center;
   animation: fadeInUp 0.6s ease-out;
@@ -313,7 +299,6 @@ a {
   margin: 0 auto;
 }
 
-/* ===== Header Controls ===== */
 .header-controls {
   display: flex;
   align-items: center;
@@ -323,7 +308,6 @@ a {
   right: 0;
 }
 
-/* ===== Theme Toggle ===== */
 .theme-toggle {
   width: 44px;
   height: 44px;
@@ -351,7 +335,6 @@ a {
   height: 20px;
 }
 
-/* ===== Language Toggle ===== */
 .lang-toggle {
   display: flex;
   align-items: center;
@@ -384,7 +367,6 @@ a {
   white-space: nowrap;
 }
 
-/* ===== Upload Zone ===== */
 .upload-zone {
   position: relative;
   width: 100%;
@@ -477,7 +459,6 @@ a {
   display: none;
 }
 
-/* ===== Loading State ===== */
 .loading-overlay {
   position: absolute;
   inset: 0;
@@ -501,7 +482,6 @@ a {
   color: var(--color-text-muted);
 }
 
-/* ===== Stats Bar ===== */
 .stats-bar {
   display: flex;
   align-items: center;
@@ -562,7 +542,6 @@ a {
   background: var(--color-border);
 }
 
-/* ===== Table ===== */
 .table-card {
   width: 100%;
   max-width: 960px;
@@ -634,7 +613,6 @@ a {
   border-bottom: none;
 }
 
-/* Patient ID Badge */
 .patient-badge {
   display: inline-flex;
   align-items: center;
@@ -660,27 +638,23 @@ a {
   animation: pulse 2s infinite;
 }
 
-/* Patient Name */
 .patient-name {
   font-size: 0.8rem;
   color: var(--color-text-muted);
   margin-top: 0.25rem;
 }
 
-/* Study Date */
 .study-date {
   font-size: 0.8rem;
   color: var(--color-text-muted);
 }
 
-/* File Size */
 .file-size {
   font-family: var(--font-mono);
   font-size: 0.8rem;
   color: var(--color-text-muted);
 }
 
-/* Modality Tag */
 .modality-tag {
   display: inline-flex;
   align-items: center;
@@ -702,7 +676,6 @@ a {
 [data-theme="dark"] .modality-xray { background: rgba(192, 86, 33, 0.2); color: #F6AD55; }
 [data-theme="dark"] .modality-default { background: var(--color-bg-elevated); color: var(--color-text-secondary); }
 
-/* UID Text */
 .uid-text {
   font-family: var(--font-mono);
   font-size: 0.8rem;
@@ -713,7 +686,6 @@ a {
   white-space: nowrap;
 }
 
-/* View Button */
 .view-btn {
   display: inline-flex;
   align-items: center;
@@ -747,7 +719,6 @@ a {
   height: 16px;
 }
 
-/* ===== Modal ===== */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -842,7 +813,6 @@ a {
   gap: 1.5rem;
 }
 
-/* ===== Image Viewer Toolbar ===== */
 .viewer-toolbar {
   display: flex;
   align-items: center;
@@ -931,7 +901,6 @@ a {
   margin-left: 0.25rem;
 }
 
-/* ===== Image Container ===== */
 .image-item {
   width: 100%;
   max-width: 600px;
@@ -986,7 +955,6 @@ a {
   pointer-events: none;
 }
 
-/* ===== Empty State ===== */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -1028,7 +996,6 @@ a {
   max-width: 320px;
 }
 
-/* ===== Loading Spinner ===== */
 .spinner {
   width: 24px;
   height: 24px;
@@ -1038,7 +1005,6 @@ a {
   animation: spin 0.8s linear infinite;
 }
 
-/* ===== Toast Notifications ===== */
 .toast-container {
   position: fixed;
   bottom: 1.5rem;
@@ -1119,7 +1085,6 @@ a {
   height: 12px;
 }
 
-/* ===== Keyboard Shortcuts Help ===== */
 .shortcuts-hint {
   display: flex;
   align-items: center;
@@ -1151,7 +1116,6 @@ a {
   box-shadow: 0 1px 0 var(--color-border);
 }
 
-/* ===== Responsive ===== */
 @media screen and (max-width: 768px) {
   .container {
     padding-inline: 1rem;

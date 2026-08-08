@@ -1,5 +1,3 @@
-/* ===== DICOM Metadata Helpers ===== */
-
 export const getModalityClass = (modality: string): string => {
   const m = modality.toUpperCase();
   if (m === 'CT') return 'modality-ct';
