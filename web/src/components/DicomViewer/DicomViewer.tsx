@@ -102,8 +102,9 @@ const DicomViewer = () => {
   const enabledElementsRef = useRef<Set<HTMLDivElement>>(new Set());
   const metadataRef = useRef<ImageMetadata[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const tableCardRef = useRef<HTMLDivElement>(null);
   const toastIdRef = useRef(0);
-  const toastTimeoutsRef = useRef<Map<number, NodeJS.Timeout>>(new Map());
+  const toastTimeoutsRef = useRef<Map<number | string, NodeJS.Timeout>>(new Map());
 
   useEffect(() => {
     cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
@@ -158,11 +159,12 @@ const DicomViewer = () => {
 
     const timeout1 = setTimeout(() => {
       setToasts((prev) => prev.map((t) => (t.id === id ? { ...t, exiting: true } : t)));
-      const timeout2 = setTimeout(() => {
+      const timeout2Key = `toast-exit-${id}`;
+    const timeout2 = setTimeout(() => {
         setToasts((prev) => prev.filter((t) => t.id !== id));
-        toastTimeoutsRef.current.delete(id);
+        toastTimeoutsRef.current.delete(timeout2Key);
       }, 300);
-      toastTimeoutsRef.current.set(id + 0.1, timeout2);
+      toastTimeoutsRef.current.set(timeout2Key, timeout2);
     }, 3500);
     toastTimeoutsRef.current.set(id, timeout1);
   }, []);
@@ -235,7 +237,7 @@ const DicomViewer = () => {
       }
     };
 
-    const workers = Array.from(
+    Array.from(
       { length: Math.min(MAX_CONCURRENT, selectedImages.length) },
       () => worker(),
     );
@@ -339,8 +341,8 @@ const DicomViewer = () => {
     const validResults = results.filter((r): r is ImageMetadata => r !== null);
 
     if (validResults.length > 0) {
-      const { added } = mergeMetadata(metadataRef.current, validResults);
-      setMetadata((prev) => mergeMetadata(prev, validResults).next);
+      const { next, added } = mergeMetadata(metadataRef.current, validResults);
+      setMetadata(next);
 
       if (added > 0) {
         addToast('success', t('toast.filesLoaded', { count: added }));
@@ -458,10 +460,24 @@ const DicomViewer = () => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [open, handleCloseModal, handleInvert, handleReset, handleZoomIn, handleZoomOut, switchTool]);
 
+  const prevHasFilesRef = useRef(false);
+
   const totalFiles = metadata.reduce((acc, m) => acc + m.files.length, 0);
   const totalPatients = metadata.length;
   const totalSize = metadata.reduce((acc, m) => acc + m.totalSize, 0);
   const hasFiles = metadata.length > 0;
+
+  useEffect(() => {
+    if (hasFiles && !prevHasFilesRef.current) {
+      requestAnimationFrame(() => {
+        if (tableCardRef.current) {
+          tableCardRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          tableCardRef.current.focus();
+        }
+      });
+    }
+    prevHasFilesRef.current = hasFiles;
+  }, [hasFiles]);
 
   return (
     <main>
@@ -572,7 +588,7 @@ const DicomViewer = () => {
         )}
 
         {hasFiles ? (
-          <div className="table-card">
+          <div className="table-card" ref={tableCardRef} tabIndex={-1} style={{ outline: 'none' }}>
             <div className="table-header">
               <span className="table-title">{t('table.title')}</span>
             </div>

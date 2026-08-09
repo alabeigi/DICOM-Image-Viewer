@@ -1,16 +1,16 @@
 import type { Metadata } from 'next';
 import { Inter, Vazirmatn } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, setRequestLocale } from 'next-intl/server';
+import { getMessages } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import '../globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
-const vazirmatn = Vazirmatn({ subsets: ['arabic'] });
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const vazirmatn = Vazirmatn({ subsets: ['arabic'], variable: '--font-vazirmatn' });
 
 type Props = {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 };
 
 export function generateStaticParams() {
@@ -69,11 +69,10 @@ export default async function LocaleLayout({
   params,
 }: Props) {
   const { locale } = await params;
-  setRequestLocale(locale);
 
   const messages = await getMessages();
   const direction = locale === 'fa' ? 'rtl' : 'ltr';
-  const fontClass = locale === 'fa' ? vazirmatn.className : inter.className;
+  const fontClass = `${inter.variable} ${vazirmatn.variable}`;
 
   return (
     <html lang={locale} dir={direction} suppressHydrationWarning>

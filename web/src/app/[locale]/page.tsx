@@ -1,17 +1,12 @@
-import { setRequestLocale } from 'next-intl/server';
+'use client';
+
 import dynamic from 'next/dynamic';
 
-const Home = dynamic(() => import('@/components/DicomViewer/DicomViewer'), {
+const DicomViewer = dynamic(() => import('@/components/DicomViewer/DicomViewer'), {
   ssr: false,
 });
 
-type Props = {
-  params: { locale: string };
-};
-
-export default async function Page({ params }: Props) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-
-  return <Home />;
+export default function Home() {
+  return <DicomViewer />;
 }
+

@@ -5,8 +5,6 @@ import { useRouter, usePathname } from '@/i18n/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { GlobeIcon } from '../DicomViewer/Icons';
 
-
-
 const LanguageSwitcher = () => {
   const locale = useLocale();
   const router = useRouter();
