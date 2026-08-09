@@ -1196,24 +1196,62 @@ a {
   }
   
   .modal-overlay {
-    padding: 0.5rem;
+    padding: 0.25rem;
   }
   
   .modal-content {
-    max-height: 98vh;
+    max-height: 100vh;
+    border-radius: var(--radius-md);
+  }
+  
+  .modal-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .modal-title-group {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .modal-title {
+    font-size: 1rem;
+  }
+  
+  .modal-image-count {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
   }
   
   .modal-body {
-    padding: 1.25rem;
+    padding: 0.75rem;
+    gap: 1rem;
+  }
+  
+  .image-item {
+    max-width: 100%;
   }
   
   .image-viewport {
     border-radius: var(--radius-md);
   }
   
+  .image-label {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .image-label-filename {
+    max-width: 100%;
+  }
+  
   .viewer-toolbar {
     padding: 0.5rem;
     gap: 0.25rem;
+  }
+  
+  .toolbar-group {
+    padding: 0;
   }
   
   .toolbar-group:not(:last-child) {
