@@ -1,59 +1,59 @@
 {
   "app": {
-    "title": "مشاهده‌گر تصاویر DICOM",
-    "description": "بارگذاری و مشاهده تصاویر پزشکی DICOM با دقت و وضوح"
+    "title": "مشاهده‌گر تصاویر پزشکی DICOM",
+    "description": "بارگذاری و مشاهده تصاویر پزشکی DICOM با کیفیت و وضوح بالا"
   },
   "upload": {
     "title": "بارگذاری فایل‌های DICOM",
     "titleDrag": "فایل‌های DICOM را اینجا رها کنید",
-    "subtitle": "فایل‌های .dcm خود را بکشید و رها کنید یا برای مرور کلیک کنید",
-    "hint": "پشتیبانی از فایل‌های .dcm • چند فایل پذیرفته می‌شود",
+    "subtitle": "فایل‌های .dcm را بکشید و اینجا رها کنید یا برای انتخاب، کلیک کنید",
+    "hint": "پشتیبانی از فایل‌های .dcm • امکان بارگذاری چند فایل",
     "parsing": "در حال پردازش فایل‌های DICOM..."
   },
   "stats": {
-    "patients": "{count, plural, one {بیمار} other {بیماران}}",
-    "series": "سلسله‌مراتب",
-    "images": "تصاویر",
-    "totalSize": "اندازه کل",
-    "ariaLabel": "آمار بارگذاری"
+    "patients": "{count, plural, one {بیمار} other {بیمار}}",
+    "series": "{count, plural, one {سری} other {سری}}",
+    "images": "{count, plural, one {تصویر} other {تصویر}}",
+    "totalSize": "حجم کل",
+    "ariaLabel": "آمار فایل‌های بارگذاری‌شده"
   },
   "table": {
-    "title": "سلسله‌مراتب DICOM",
+    "title": "اطلاعات تصاویر DICOM",
     "patient": "بیمار",
-    "modality": "نوع",
-    "studyDate": "تاریخ مطالعه",
-    "seriesUID": "شناسه سلسله‌مراتب",
-    "studyUID": "شناسه مطالعه",
-    "images": "تصاویر",
-    "size": "اندازه",
+    "modality": "نوع تصویربرداری",
+    "studyDate": "تاریخ بررسی",
+    "seriesUID": "شناسه سری",
+    "studyUID": "شناسه بررسی",
+    "images": "تعداد تصاویر",
+    "size": "حجم",
     "actions": "عملیات",
     "view": "مشاهده",
-    "ariaLabel": "داده‌های سلسله‌مراتب DICOM"
+    "ariaLabel": "اطلاعات تصاویر DICOM"
   },
   "empty": {
-    "title": "هیچ فایل DICOM بارگذاری نشده است",
-    "description": "اولین تصویر DICOM خود را برای شروع بارگذاری کنید. مشاهده‌گر از فایل‌های استاندارد .dcm پشتیبانی می‌کند."
+    "title": "هنوز فایلی بارگذاری نشده است",
+    "description": "برای شروع، فایل‌های DICOM خود را بارگذاری کنید. مشاهده‌گر از فایل‌های استاندارد .dcm پشتیبانی می‌کند."
   },
   "modal": {
-    "title": "تصاویر DICOM",
-    "imageCount": "{count, plural, other {# تصویر}}",
+    "title": "مشاهده تصاویر DICOM",
+    "imageCount": "{count, plural, one {# تصویر} other {# تصویر}}",
     "imageLabel": "تصویر {index}",
-    "closeLabel": "بستن مشاهده‌گر تصویر",
-    "ariaLabel": "مشاهده‌گر تصویر DICOM",
+    "closeLabel": "بستن مشاهده‌گر",
+    "ariaLabel": "مشاهده‌گر تصاویر DICOM",
     "viewerAriaLabel": "کنترل‌های مشاهده‌گر تصویر"
   },
   "toolbar": {
-    "windowLevel": "سطح پنجره",
-    "pan": "جابجایی",
+    "windowLevel": "تنظیم روشنایی و کنتراست",
+    "pan": "جابجایی تصویر",
     "zoom": "بزرگ‌نمایی",
     "zoomIn": "بزرگ‌نمایی",
     "zoomOut": "کوچک‌نمایی",
-    "invert": "معکوس",
-    "reset": "بازنشانی"
+    "invert": "معکوس‌کردن تصویر",
+    "reset": "بازنشانی تصویر"
   },
   "shortcuts": {
-    "title": "میانبرهای صفحه‌کلید:",
-    "invert": "معکوس",
+    "title": "میانبرهای صفحه‌کلید",
+    "invert": "معکوس‌کردن تصویر",
     "reset": "بازنشانی",
     "zoom": "بزرگ‌نمایی",
     "close": "بستن"
@@ -63,12 +63,12 @@
     "switchToLight": "تغییر به حالت روشن"
   },
   "toast": {
-    "filesLoaded": "{count, plural, other {# فایل DICOM با موفقیت بارگذاری شد}}",
-    "parseError": "خطا در پردازش {file}",
-    "noValidFiles": "فایل معتبر .dcm یافت نشد",
+    "filesLoaded": "{count, plural, one {# فایل DICOM با موفقیت بارگذاری شد} other {# فایل DICOM با موفقیت بارگذاری شد}}",
+    "parseError": "پردازش فایل «{file}» با خطا مواجه شد",
+    "noValidFiles": "فایل DICOM معتبر (.dcm) یافت نشد",
     "imageInverted": "تصویر معکوس شد",
-    "imageNormal": "تصویر عادی",
-    "viewReset": "مشاهده به حالت پیش‌فرض بازنشانی شد",
+    "imageNormal": "تصویر به حالت عادی بازگشت",
+    "viewReset": "نمایش تصویر به حالت پیش‌فرض بازنشانی شد",
     "dismiss": "بستن اعلان"
   },
   "language": {

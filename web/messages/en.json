@@ -1,19 +1,19 @@
 {
   "app": {
-    "title": "DICOM Image Viewer",
-    "description": "Upload and view DICOM medical images with precision and clarity"
+    "title": "DICOM Medical Image Viewer",
+    "description": "Upload and view medical DICOM images with precision and clarity"
   },
   "upload": {
     "title": "Upload DICOM Files",
     "titleDrag": "Drop DICOM files here",
-    "subtitle": "Drag & drop your .dcm files or click to browse",
-    "hint": "Supports .dcm files • Multiple files accepted",
-    "parsing": "Parsing DICOM files..."
+    "subtitle": "Drag and drop your .dcm files here, or click to browse",
+    "hint": "Supports .dcm files • Multiple files can be uploaded",
+    "parsing": "Processing DICOM files..."
   },
   "stats": {
     "patients": "{count, plural, one {Patient} other {Patients}}",
-    "series": "Series",
-    "images": "Images",
+    "series": "{count, plural, one {Series} other {Series}}",
+    "images": "{count, plural, one {Image} other {Images}}",
     "totalSize": "Total Size",
     "ariaLabel": "Upload statistics"
   },
@@ -28,11 +28,11 @@
     "size": "Size",
     "actions": "Actions",
     "view": "View",
-    "ariaLabel": "DICOM series data"
+    "ariaLabel": "DICOM series information"
   },
   "empty": {
     "title": "No DICOM files loaded",
-    "description": "Upload your first DICOM image to get started. The viewer supports standard .dcm files."
+    "description": "Upload your DICOM files to get started. The viewer supports standard .dcm files."
   },
   "modal": {
     "title": "DICOM Images",
@@ -43,20 +43,20 @@
     "viewerAriaLabel": "Image viewer controls"
   },
   "toolbar": {
-    "windowLevel": "Window/Level",
+    "windowLevel": "Window / Level",
     "pan": "Pan",
     "zoom": "Zoom",
     "zoomIn": "Zoom In",
     "zoomOut": "Zoom Out",
-    "invert": "Invert",
-    "reset": "Reset"
+    "invert": "Invert Image",
+    "reset": "Reset View"
   },
   "shortcuts": {
-    "title": "Keyboard shortcuts:",
-    "invert": "Invert",
-    "reset": "Reset",
+    "title": "Keyboard Shortcuts",
+    "invert": "Invert Image",
+    "reset": "Reset View",
     "zoom": "Zoom",
-    "close": "Close"
+    "close": "Close Viewer"
   },
   "theme": {
     "switchToDark": "Switch to dark mode",
@@ -64,10 +64,10 @@
   },
   "toast": {
     "filesLoaded": "{count, plural, one {# DICOM file loaded successfully} other {# DICOM files loaded successfully}}",
-    "parseError": "Failed to parse {file}",
-    "noValidFiles": "No valid .dcm files found",
+    "parseError": "Failed to process \"{file}\"",
+    "noValidFiles": "No valid DICOM (.dcm) files found",
     "imageInverted": "Image inverted",
-    "imageNormal": "Image normal",
+    "imageNormal": "Image restored to normal",
     "viewReset": "View reset to default",
     "dismiss": "Dismiss notification"
   },
