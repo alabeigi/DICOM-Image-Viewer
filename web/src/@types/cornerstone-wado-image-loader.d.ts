@@ -2,8 +2,8 @@ declare module 'cornerstone-wado-image-loader' {
   import { Image } from 'cornerstone-core';
 
   export const external: {
-    cornerstone: any;
-    dicomParser: any;
+    cornerstone: unknown;
+    dicomParser: unknown;
   };
 
   export const wadouri: {
