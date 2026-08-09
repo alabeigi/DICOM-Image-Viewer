@@ -1,89 +1,193 @@
-# Technical Decision Documentation
+<div align="center">
 
-## 1. Choice of Package Manager: pnpm
+# 🏥 DICOM Image Viewer
 
-**Reason for Selection:**
+### Clinical-grade medical image viewer — built with modern web technologies
 
-- **Efficiency**: 
-  - `pnpm` is widely recognized for its superior performance and efficiency compared to traditional package managers like `npm` and `yarn`. Unlike these package managers, which often duplicate dependencies across multiple projects, `pnpm` uses a unique structure that creates hard links to a single version of each package. This approach dramatically reduces disk space usage and speeds up the installation process. In projects with a large number of dependencies, this can significantly decrease build times, allowing for faster development cycles.
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript)](https://typescriptlang.org)
+[![Vercel](https://img.shields.io/badge/Deployed-Vercel-000?logo=vercel)](https://vercel.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 
-- **Strict Dependency Management**: 
-  - Managing dependencies in large projects can be challenging, especially when different packages require different versions of the same dependency. `pnpm` addresses this by ensuring that each package gets the exact version of the dependency it requires. Unlike `npm` or `yarn`, which may flatten the dependency tree and cause version conflicts, `pnpm` installs dependencies in a way that preserves the integrity of the versioning, preventing unexpected behavior due to version mismatches.
+<br />
 
-- **Monorepo Support**: 
-  - `pnpm` excels in monorepo environments, where multiple projects or packages are housed within a single repository. By sharing a common `node_modules` store, `pnpm` avoids redundant installations of the same package across different projects, leading to more consistent and manageable dependencies. This feature also streamlines the process of updating and managing dependencies across the entire monorepo, ensuring all packages are in sync.
+**A professional DICOM viewer for clinical image analysis — supporting Window/Level, Pan, Zoom, Invert, Reset, and multi-file batch viewing with patient metadata extraction.**
 
-## 2. Choice of Framework: Next.js
+[Live Demo](https://your-vercel-url.vercel.app) · [Report Bug](https://github.com/your-username/DICOM-Image-Viewer/issues) · [Request Feature](https://github.com/your-username/DICOM-Image-Viewer/issues)
 
-**Why Next.js was chosen:**
+</div>
 
-- **Server-Side Rendering (SSR)**: 
-  - Next.js provides built-in support for server-side rendering, which is crucial for improving both the performance and SEO of your application. SSR allows pages to be pre-rendered on the server before being sent to the client, ensuring faster initial load times and better search engine indexing. This is especially important for applications like a DICOM viewer, where rapid access to data and visibility on search engines can be critical.
+---
 
-- **Static Site Generation (SSG)**: 
-  - In addition to SSR, Next.js supports static site generation (SSG). This feature allows you to pre-render pages at build time, which can then be served as static files. SSG is ideal for pages that do not change frequently and can greatly improve performance by serving pre-generated content. The combination of SSR and SSG in Next.js makes it a versatile framework for building both dynamic and static web applications.
+## ✨ Features
 
-- **API Routes**: 
-  - Next.js simplifies the process of creating backend API routes within the same project. Instead of setting up a separate backend server, you can define API endpoints directly in your Next.js project, providing seamless integration between your frontend and backend logic. This feature is particularly useful for small to medium-sized applications, where you can manage everything in one codebase.
+| Feature | Description |
+|---------|-------------|
+| 🔬 **DICOM Rendering** | Real-time medical image display powered by Cornerstone.js |
+| 🩺 **Clinical Tools** | Window/Level, Pan, Zoom, Invert, and Reset — all keyboard-accessible |
+| 📁 **Batch Upload** | Drag & drop multiple `.dcm` files with instant metadata extraction |
+| 🌙 **Dark Mode** | Eye-friendly dark theme with smooth transitions |
+| 🌐 **i18n** | English & Persian (Farsi) with full RTL support |
+| 📱 **Responsive** | Mobile-optimized with sticky action columns and touch-friendly toolbar |
+| ⌨️ **Keyboard Shortcuts** | 10+ shortcuts for clinical workflow efficiency |
+| 📊 **Patient Metadata** | Auto-extracted Patient ID, Name, Modality, Series, and Study Date |
 
-- **Built-in Routing**: 
-  - Next.js offers a file-based routing system that automatically maps files in the `pages` directory to routes in your application. This eliminates the need for additional routing libraries and manual route configurations, making it easier to navigate and manage the structure of your application.
+---
 
-- **Typescript Support**: 
-  - TypeScript is fully supported in Next.js, allowing you to benefit from static type checking and better tooling support. By using TypeScript, you can catch errors early in the development process, reducing the likelihood of runtime errors and improving the overall reliability of your codebase. TypeScript also enhances the developer experience by providing better autocompletion, documentation, and error checking in your IDE.
+## 🏗️ Architecture
 
-## 3. Use of Dynamic Imports
+```
+DICOM-Image-Viewer/
+├── web/
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── [locale]/
+│   │   │   │   ├── layout.tsx        # Root layout with i18n provider
+│   │   │   │   ├── page.tsx          # Home page
+│   │   │   │   └── HomeClient.tsx    # Client-side home with DicomViewer
+│   │   │   ├── globals.css           # Full design system with CSS variables
+│   │   │   ├── icon.svg              # Custom SVG favicon
+│   │   │   └── apple-icon.svg        # Apple touch icon
+│   │   ├── components/
+│   │   │   ├── DicomViewer/
+│   │   │   │   ├── DicomViewer.tsx   # Core viewer (~800 lines)
+│   │   │   │   ├── DicomViewer.types.ts
+│   │   │   │   ├── Icons.tsx         # SVG icon components
+│   │   │   │   └── utils.ts          # DICOM parsing utilities
+│   │   │   └── LanguageSwitcher/
+│   │   │       └── LanguageSwitcher.tsx
+│   │   ├── i18n/
+│   │   │   ├── routing.ts            # Locale routing config
+│   │   │   ├── request.ts            # Server-side i18n
+│   │   │   └── navigation.ts         # Client-side navigation
+│   │   └── middleware.ts             # Locale redirect middleware
+│   ├── messages/
+│   │   ├── en.json                   # English translations
+│   │   └── fa.json                   # Persian translations
+│   ├── next.config.mjs               # Next.js + next-intl config
+│   ├── tsconfig.json
+│   ├── eslint.config.mjs
+│   ├── .nvmrc                        # Node.js 24
+│   └── package.json
+├── README.md
+└── .gitignore
+```
 
-**Why Dynamic Imports were used:**
+---
 
-- **Client-Side Rendering (CSR)**: 
-  - The use of dynamic imports in the `page.tsx` file with `ssr: false` ensures that the `DicomViewer` component is rendered exclusively on the client side. This approach is essential for components that depend on browser-specific APIs, such as `cornerstone` for rendering DICOM images. Since these APIs are not available during server-side rendering, dynamic imports prevent potential errors and ensure that the component is only loaded when it can be safely executed in the client environment.
+## 🛠️ Tech Stack
 
-- **Code Splitting**: 
-  - Dynamic imports enable code splitting, a technique that improves the performance of your application by dividing the codebase into smaller, manageable chunks. Instead of loading the entire application at once, code splitting allows you to load only the parts of the code that are necessary for the current page. This reduces the initial load time and provides a more responsive user experience, especially in applications with complex components like a DICOM viewer.
+| Layer | Technology | Version |
+|-------|-----------|---------|
+| Framework | Next.js (App Router) | 16.3.0 |
+| UI Library | React | 19.2.8 |
+| Language | TypeScript | 6.0.3 |
+| Medical Imaging | Cornerstone.js | 2.6.1 |
+| DICOM Parsing | dicom-parser | 1.8.21 |
+| Touch Gestures | Hammer.js | 2.0.8 |
+| i18n | next-intl | 4.13.5 |
+| Linting | ESLint + typescript-eslint | 10.8.1 |
+| Package Manager | pnpm | 10.30.1 |
+| Deployment | Vercel | — |
 
-## 4. Use of TypeScript
+---
 
-**Benefits of TypeScript:**
+## 🚀 Getting Started
 
-- **Static Typing**: 
-  - TypeScript introduces static typing to JavaScript, allowing you to define types for variables, function parameters, and return values. This helps catch errors during development, such as type mismatches or undefined variables, before they lead to bugs in production. By catching these issues early, TypeScript helps to create a more robust and maintainable codebase.
+### Prerequisites
 
-- **Improved Developer Experience**: 
-  - TypeScript's powerful type inference and tooling support enhance the developer experience. Modern IDEs can leverage TypeScript's type system to provide intelligent code completion, inline documentation, and real-time error checking. This not only speeds up development but also makes the code easier to read and understand, as the types provide clear documentation of what each function and variable is supposed to represent.
+- **Node.js** ≥ 24
+- **pnpm** ≥ 10
 
-- **Enhanced Refactoring**: 
-  - When refactoring code, TypeScript's type system ensures that changes are consistent across the entire codebase. If a function's signature changes, TypeScript will highlight all instances where the function is used incorrectly, reducing the risk of introducing errors during the refactoring process.
+### Installation
 
-## 5. Use of Material-UI (MUI)
+```bash
+# Clone the repository
+git clone https://github.com/your-username/DICOM-Image-Viewer.git
+cd DICOM-Image-Viewer/web
 
-**Why MUI was chosen:**
+# Install dependencies
+pnpm install
 
-- **Component Library**: 
-  - MUI (Material-UI) is one of the most popular React UI frameworks, offering a rich set of pre-built components that adhere to Google's Material Design guidelines. These components are highly customizable and provide a consistent look and feel across the application. By using MUI, developers can accelerate the development process, as they do not need to build common UI elements from scratch.
+# Start development server
+pnpm dev
+```
 
-- **Customizability**: 
-  - MUI provides a powerful theming system that allows you to customize the appearance of components to match your brand or design requirements. You can define global styles, adjust individual component styles, and even create custom themes that can be applied across the entire application. This flexibility makes MUI suitable for a wide range of projects, from small personal websites to large enterprise applications.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-- **Responsiveness**: 
-  - MUI components are designed with responsiveness in mind, ensuring that your application looks and works well on a variety of devices and screen sizes. Built-in responsive utilities and grid systems make it easy to create layouts that adapt to different screen sizes without requiring extensive custom CSS.
+---
 
-- **Accessibility**: 
-  - MUI components are built with accessibility in mind, following best practices to ensure that your application is usable by as many people as possible. This includes support for keyboard navigation, screen readers, and other assistive technologies, helping you build inclusive applications that meet accessibility standards.
+## ⌨️ Keyboard Shortcuts
 
-## 6. Implementation Details in DicomViewer Component
+| Shortcut | Action |
+|----------|--------|
+| `W` | Window/Level mode |
+| `P` | Pan mode |
+| `Z` | Zoom mode |
+| `I` | Invert image |
+| `R` | Reset view |
+| `↑` / `↓` | Adjust window width |
+| `←` / `→` | Adjust window center |
+| `Esc` | Close modal |
+| `D` | Toggle dark mode |
 
-**Key Features of DicomViewer:**
+---
 
-- **Client-Side Image Rendering**: 
-  - The `DicomViewer` component leverages the `cornerstone` and `cornerstoneWADOImageLoader` libraries to render DICOM images directly in the browser. These libraries provide the necessary tools to parse, display, and interact with medical images, making them ideal for building interactive medical applications. By handling image rendering on the client side, `DicomViewer` can provide a responsive and interactive experience, allowing users to view and manipulate medical images without needing to download specialized software.
+## 🌐 Internationalization
 
-- **State Management**: 
-  - React's state management system is used to handle the various states within the `DicomViewer` component, including file uploads, metadata extraction, and image rendering. By managing these states within the component, the application can provide a smooth and dynamic user experience, updating the UI in response to user actions and ensuring that all necessary data is available when needed.
+Full bilingual support with automatic RTL detection:
 
-- **Memoization**: 
-  - To optimize performance, the `DicomViewer` component uses `React.memo` to prevent unnecessary re-renders. Since rendering medical images can be resource-intensive, reducing the number of re-renders helps improve the overall performance of the application. Memoization ensures that the component only re-renders when its props change, rather than on every update, leading to a more efficient use of resources.
+| Language | Direction | ICU Pluralization |
+|----------|-----------|-------------------|
+| English | LTR | ✅ |
+| Persian (فارسی) | RTL | ✅ |
 
-## Conclusion
+Locale routing is handled via `next-intl` with middleware-based detection.
 
-The decisions made in this project—choosing `pnpm` as the package manager, utilizing `Next.js` as the framework, leveraging dynamic imports, adopting TypeScript, and using MUI for the UI—were all aimed at creating a highly performant, scalable, and maintainable application. These technologies and practices ensure that the DICOM viewer is robust, efficient, and capable of handling the complex tasks required in medical imaging applications. By carefully selecting and integrating these tools, the project is well-positioned to deliver a high-quality user experience, both in terms of functionality and performance.
+---
+
+## 🧠 Technical Highlights
+
+### Smart Metadata Merging
+When uploading multiple DICOM files from the same study, metadata is intelligently merged — fields present in all files are shared, while file-specific values (like `instanceNumber`) are preserved per-file.
+
+### Optimized Image Loading
+Cornerstone image loaders are initialized once globally. Each file gets its own unique image ID to prevent cache collisions during batch viewing.
+
+### Sticky Action Column
+The table's View button uses `position: sticky` to remain visible during horizontal scroll — critical for mobile users viewing wide metadata tables.
+
+### CSS Custom Properties Design System
+Complete theming via CSS variables with automatic dark mode support — no JavaScript theme switching needed.
+
+---
+
+## 📦 Deployment
+
+Deploy to Vercel with zero configuration:
+
+```bash
+# Install Vercel CLI
+pnpm add -g vercel
+
+# Deploy
+cd web
+vercel
+```
+
+Or connect your GitHub repository to Vercel for automatic deployments on every push.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License — see the [LICENSE](./LICENSE) file for details.
+
+---
+
+<div align="center">
+
+**Built with ❤️ for medical imaging professionals**
+
+</div>
