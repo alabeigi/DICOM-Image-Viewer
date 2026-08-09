@@ -19,7 +19,11 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    (process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'http://localhost:3000');
 
   const titles: Record<string, string> = {
     en: 'DICOM Image Viewer',
@@ -32,6 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 
   return {
+    metadataBase: new URL(baseUrl),
     title: titles[locale] || titles.en,
     description: descriptions[locale] || descriptions.en,
     alternates: {
@@ -46,20 +51,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: descriptions[locale] || descriptions.en,
       locale: locale === 'fa' ? 'fa_IR' : 'en_US',
       type: 'website',
-      images: [
-        {
-          url: `${baseUrl}/og-image.svg`,
-          width: 1200,
-          height: 630,
-          alt: titles[locale] || titles.en,
-        },
-      ],
+      siteName: 'DICOM Image Viewer',
+      url: `${baseUrl}/${locale}`,
     },
     twitter: {
       card: 'summary_large_image',
       title: titles[locale] || titles.en,
       description: descriptions[locale] || descriptions.en,
-      images: [`${baseUrl}/og-image.svg`],
     },
   };
 }
