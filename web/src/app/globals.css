@@ -598,6 +598,34 @@ a {
   vertical-align: middle;
 }
 
+.dicom-table th:last-child,
+.dicom-table td:last-child {
+  position: sticky;
+  right: 0;
+  z-index: 1;
+  background: var(--color-bg-card);
+}
+
+.dicom-table thead th:last-child {
+  background: var(--color-bg-elevated);
+  z-index: 2;
+}
+
+.dicom-table tbody tr:hover td:last-child {
+  background: var(--color-primary-bg);
+}
+
+.dicom-table td:last-child::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to right, transparent, color-mix(in srgb, var(--color-text-primary) 8%, transparent));
+  pointer-events: none;
+}
+
 .dicom-table tbody tr:last-child td {
   border-bottom: none;
 }
